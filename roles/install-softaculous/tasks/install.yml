@@ -1,0 +1,15 @@
+---
+- name: Download Softaculous Install Script
+  get_url:
+    url: http://files.softaculous.com/install.sh
+    dest: /tmp
+    force: yes
+  register: softaculous_downloaded
+  tags: install_softaculous
+
+- name: Install Softaculous
+  shell: /bin/bash /tmp/install.sh --quick
+  args:
+    chdir: /tmp
+    creates: /usr/local/cpanel/whostmgr/docroot/cgi/softaculous/index.php
+  tags: install_softaculous

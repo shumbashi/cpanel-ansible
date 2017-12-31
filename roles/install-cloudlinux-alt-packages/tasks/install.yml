@@ -1,0 +1,40 @@
+---
+- name: Remove packages
+  yum:
+    name: "{{ item }}"
+    state: removed
+  with_items:
+    - git
+  tags: cloudlinux_alt
+
+- name: Ensure CloudLinux Alt-Packages Installed and updated
+  yum:
+    name: "{{ item }}"
+    state: installed
+    update_cache: yes
+    enablerepo: "cloudlinux-{{ ansible_architecture }}-server-{{ ansible_distribution_major_version  }}"
+  with_items:
+    - "@alt-php"
+    - alt-python-virtualenv
+    - alt-mod-passenger
+    - "@alt-python"
+    - "@alt-ruby"
+    - alt-python27-devel
+    - lve-stats
+  tags: cloudlinux_alt
+
+- name: Maintain Aliases for 3rd party git in /etc/bashrc
+  lineinfile:
+    dest: /etc/bashrc
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - { regexp: 'alias git=', line: 'alias git="/usr/local/cpanel/3rdparty/bin/git"' }
+    - { regexp: 'alias git-cvsserver=', line: 'alias git-cvsserver="/usr/local/cpanel/3rdparty/bin/git-cvsserver"' }
+    - { regexp: 'alias gitk=', line: 'alias gitk="/usr/local/cpanel/3rdparty/bin/gitk"' }
+    - { regexp: 'alias git-receive-pack=', line: 'alias git-receive-pack="/usr/local/cpanel/3rdparty/bin/git-receive-pack"' }
+    - { regexp: 'alias git-shell=', line: 'alias git-shell="/usr/local/cpanel/3rdparty/bin/git-shell"' }
+    - { regexp: 'alias git-upload-archive=', line: 'alias git-upload-archive="/usr/local/cpanel/3rdparty/bin/git-upload-archive"' }
+    - { regexp: 'alias git-upload-pack=', line: 'alias git-upload-pack="/usr/local/cpanel/3rdparty/bin/git-upload-pack"' }
+  tags: cloudlinux_alt

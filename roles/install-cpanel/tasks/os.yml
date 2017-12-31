@@ -1,0 +1,42 @@
+---
+- name: Unmanage Network Interfaces
+  lineinfile:
+    line: 'NM_CONTROLLED="no"'
+    state: present
+    path: /etc/sysconfig/network-scripts/ifcfg-{{item}}
+  with_items: "{{ ansible_interfaces }}"
+
+- name: Disable NetworkManager Service
+  service:
+    name: NetworkManager
+    state: stopped
+    enabled: no
+
+- name: Enable network service
+  service:
+    name: network
+    state: started
+    enabled: yes
+
+- name: Restart network service
+  service:
+    name: network
+    state: restarted
+
+- name: Remove local resolver from resolv.conf
+  lineinfile:
+    line: 'nameserver 127.0.0.1'
+    state: absent
+    path: /etc/resolv.conf
+
+- name: Add 8.8.8.8 to resolve.conf
+  lineinfile:
+    line: 'nameserver 8.8.8.8'
+    state: present
+    path: /etc/resolv.conf 
+
+- name: Add 8.8.4.4 to resolve.conf
+  lineinfile:
+    line: 'nameserver 8.8.4.4'
+    state: present
+    path: /etc/resolv.conf

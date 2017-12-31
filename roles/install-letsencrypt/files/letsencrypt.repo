@@ -1,0 +1,4 @@
+[letsencrypt-cpanel]
+name=Let's Encrypt for cPanel
+baseurl=https://letsencrypt-for-cpanel.com/repo
+gpgcheck=0

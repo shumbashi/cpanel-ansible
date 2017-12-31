@@ -1,0 +1,4 @@
+---
+- name: Include the CloudLinux CageFS Installer Task
+  include_tasks: install.yml
+  when: cloudlinux_installed == true and (install_cloudlinux_cagefs is defined and install_cloudlinux_cagefs == 'true')

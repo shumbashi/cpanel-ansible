@@ -1,0 +1,68 @@
+---
+- name: Download CSF gzipped tarball
+  get_url:
+    url: https://download.configserver.com/csf.tgz
+    dest: /usr/src
+    force: yes
+  register: csf_downloaded
+  when: csf_installed == false
+  tags: configserver_csf
+
+- name: Unarchive CSF source
+  unarchive:
+    src: /usr/src/csf.tgz
+    dest: /usr/src
+    copy: no
+  register: csf_unarchived
+  when: csf_downloaded|changed and csf_installed == false
+  tags: configserver_csf
+
+- name: Install CSF
+  shell: bash /usr/src/csf/install.sh
+  args:
+    chdir: /usr/src/csf
+    creates: /usr/sbin/csf
+  when: csf_unarchived|changed and csf_installed == false
+  register: csf_install_completed
+  tags: configserver_csf
+
+- name: Maintain CSF Config
+  copy:
+    src: csf.conf
+    dest: /etc/csf/csf.conf
+  when: csf_install_completed|changed and is_openvz == 'false' 
+  notify:
+    - restart csf
+    - restart lfd
+  tags: configserver_csf
+
+- name: Maintain CSF OpenVZ Config
+  copy:
+    src: csf.conf
+    dest: /etc/csf/csf.conf
+  when: csf_install_completed|changed and is_openvz == 'true' and ansible_venet0 is defined
+  notify:
+    - restart csf
+    - restart lfd
+  tags: configserver_csf
+
+- name: Copy csfpre.sh
+  copy:
+    src: csfpre.sh
+    dest: /etc/csf/csfpre.sh
+  when: csf_install_completed|changed and is_openvz == 'true' and ansible_venet0 is defined
+  notify:
+    - restart csf
+    - restart lfd
+  tags: configserver_csf
+
+- name: Maintain CSF Allow
+  copy:
+    src: csf.allow
+    dest: /etc/csf/csf.allow
+    owner: root
+    group: root
+    mode: 0600
+  when: csf_install_completed|changed
+  notify: restart csf
+  tags: configserver_csf

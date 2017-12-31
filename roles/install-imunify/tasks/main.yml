@@ -1,0 +1,19 @@
+---
+
+- name: Check if Imunify360 is installed
+  stat:
+    path: /etc/sysconfig/imunify360/imunify360.config
+  register: imunify_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create imunify_installed variable.
+  set_fact:
+    imunify_installed: "{{ imunify_check.stat.exists|bool }}"
+  check_mode: no
+  tags: always
+
+- name: Include the Imunify360 Installer Task
+  include_tasks: install.yml
+  when: imunify_installed != true and (install_imunify is defined and install_imunify == 'true')

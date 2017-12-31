@@ -1,0 +1,23 @@
+---
+- name: Copy cloudflare apache module install script
+  copy:
+    src: cloudflare_setup.sh
+    dest: /usr/src/cloudflare_setup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: install_cloudflare
+
+- name: Cloudflare Apache Module Setup
+  command: /bin/bash /usr/src/cloudflare_setup.sh
+  args:
+    chdir: /usr/src/
+  tags: install_cloudflare
+
+- name: Install CloudFlare cPanel Plugin
+  shell: '/bin/bash <(curl -s https://raw.githubusercontent.com/cloudflare/CloudFlare-CPanel/master/cloudflare.install.sh) -k {{ cloudflare_key }} -n "{{ cloudflare_company }}"'
+  args:
+    chdir: /usr/src
+    creates: /usr/local/cpanel/etc/cloudflare.json
+    executable: /bin/bash
+  tags: install_cloudflare

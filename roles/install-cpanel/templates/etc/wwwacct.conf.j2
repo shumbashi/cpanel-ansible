@@ -1,0 +1,19 @@
+HOST {{ ansible_fqdn }}
+HOMEDIR /home
+ETHDEV {{ ansible_default_ipv4.interface }}
+NS {{ nameserver_primary }}
+NS2 {{ nameserver_secondary }}
+HOMEMATCH
+NSTTL 86400
+NS4 {{ nameserver_quaternary }}
+TTL 14400
+ADDR {{ ansible_default_ipv4.address }}
+DEFMOD paper_lantern
+SCRIPTALIAS y
+MINUID 500
+CONTACTPAGER {{ cpanel_contact_pager }}
+NS3 {{ nameserver_tertiary }}
+CONTACTEMAIL {{ cpanel_email_address }}
+LOGSTYLE combined
+DEFWEBMAILTHEME paper_lantern
+{% if ansible_default_ipv6.address is defined %}ADDR6 {{ ansible_default_ipv6.address }} {% endif %}

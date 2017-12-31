@@ -1,0 +1,18 @@
+---
+- name: Check if LetsEncrypt is installed
+  stat:
+    path: /etc/letsencrypt-cpanel.conf
+  register: letsencrypt_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create letsencrypt_installed variable.
+  set_fact:
+    letsencrypt_installed: "{{ letsencrypt_check.stat.exists|bool }}"
+  check_mode: no
+  tags: always
+
+- name: Include the LetsEncrypt Installer Task
+  include_tasks: install.yml
+  when: letsencrypt_installed != true and (install_letsencrypt is defined and install_letsencrypt == 'true')

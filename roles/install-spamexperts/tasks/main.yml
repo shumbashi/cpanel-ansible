@@ -1,0 +1,11 @@
+---
+# tasks file for install-spamexperts
+
+- name: SpamExperts | Download Plugin
+  get_url:
+    url: http://download.seinternal.com/integration/installers/cpanel/installer.sh
+    dest: /tmp/spamexperts-installer.sh
+    mode: 644
+
+- name: SpamExperts | Install Plugin
+  command: sh /tmp/spamexperts-installer.sh

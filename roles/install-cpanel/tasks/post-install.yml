@@ -1,0 +1,91 @@
+---
+# file: roles/cpanel/tasks/post-install.yml
+#
+# cPanel Role
+# Task for handling custom settings after cPanel is installed
+#
+
+- name: Post Install | cPanel config customization
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "etc/wwwacct.conf.j2", dest: "/etc/wwwacct.conf", mode: "0644" }
+    - { src: "var/cpanel/maxemailsperhour.j2", dest: "/var/cpanel/maxemailsperhour", mode: "0644" }
+  tags: cpanel
+
+- name:  Post Install | disable the cPanel setup wizard
+  file:
+    path: /etc/.whostmgrft
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  changed_when: false
+  tags: cpanel
+
+- name: Post Install | Enable IMAP Server (dovecot)
+  shell: /scripts/setupmailserver dovecot
+
+- name: Post Install | Enable DNS Server (bind)
+  shell: /scripts/setupnameserver bind
+
+- name: Post Install | Enable FTP Server (pure-ftpd)
+  shell: /scripts/setupftpserver pure-ftpd
+
+- name: Post Install | Ensure hostname in /etc/localdomains
+  lineinfile:
+    regexp: "^{{ ansible_fqdn }}$"
+    dest: /etc/localdomains
+    line: "{{ ansible_fqdn }}"
+    owner: root
+    group: mail
+    mode: 0640
+  tags: cpanel
+
+- name: Post Install | traceroute protection
+  file:
+    path: /bin/traceroute
+    mode: 0700
+  tags: cpanel
+
+- name: Post Install | TMPWatch Cron
+  cron:
+    name: "TMPWatch"
+    minute: "*/30"
+    job: "/usr/sbin/tmpwatch --mtime --nosymlinks 4 /tmp"
+    state: present
+  tags: cpanel
+
+- name: Post Install | Generate Remote Access Key | Step 1
+  shell: export REMOTE_USER=root
+
+- name: Post Install | Generate Remote Access Key | Step 2
+  shell: /usr/local/cpanel/bin/mkaccesshash
+
+- name: Post Install | Configure Pure-ftpd Server
+  file:
+    src: pure-ftpd.conf
+    dest: /etc/pure-ftpd.conf
+    mode: 0755
+    owner: root
+    group: root
+  notify: restart pure-ftpd
+
+- name: Post Install | Enable ModSec OWASP Vendor
+  shell: /scripts/modsec_vendor add http://httpupdate.cpanel.net/modsecurity-rules/meta_OWASP3.yaml
+
+- name: Post Install | Enable Updates for ModSec OWASP Vendor
+  shell: /scripts/modsec_vendor enable-updates OWASP3
+
+- name: Post Install | Configure Default Features List
+  copy:
+    src: features/default
+    dest: /var/cpanel/features/default
+    mode: 0644
+    owner: root
+    group: root
+

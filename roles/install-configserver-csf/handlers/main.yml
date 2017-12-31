@@ -1,0 +1,8 @@
+---
+- name: restart csf
+  command: /usr/sbin/csf -r
+
+- name: restart lfd
+  service:
+    name: lfd
+    state: restarted

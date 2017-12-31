@@ -1,0 +1,18 @@
+---
+# file: roles/cpanel/tasks/folders.yml
+#
+# cPanel Role
+# Task for handling required folders for cPanel install
+#
+- name: Create required cPanel folder structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  with_items:
+    - { path: "/var/cpanel/easy/apache", mode: "0755" }
+    - { path: "/root/cpanel_profile", mode: "0755" }
+    - { path: "/etc/cpanel", mode: "0755" }
+    - { path: "/var/cpanel/apps", mode: "0755" }
+    - { path: "/var/cpanel/rbl_info", mode: "0755" }
+  tags: cpanel

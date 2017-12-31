@@ -1,0 +1,29 @@
+---
+- name: cPanel Server Setup Playbook
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Sanity Check | Fail if the Operating System is not supported
+      fail:
+        msg: "cPanel installation is supported only on CentOS 6/7"
+      when: ansible_os_family != 'RedHat'
+
+  roles:
+    - { role: install-cpanel, tags: [cpanel] }
+    - { role: install-cloudlinux, tags: [cloudlinux], when: install_cloudlinux == 'true' }
+    - { role: install-cloudlinux-cagefs, tags: [cloudlinux], when: install_cloudlinux == 'true' and install_cloudlinux_cagefs == 'true' }
+    - { role: install-cloudlinux-alt-packages, tags: [cloudlinux], when: install_cloudlinux == 'true' and install_cloudlinux_alt == 'true' }
+    - { role: install-kernelcare, tags: [kernelcare], when: install_kernelcare == 'true' }
+    - { role: install-configserver-csf, tags: [csf], when: install_csf == 'true' }
+    - { role: install-configserver-cmc, tags: [cmc], when: install_cmc == 'true' }
+    - { role: install-configserver-cmm, tags: [cmm], when: install_cmm == 'true' }
+    - { role: install-configserver-cmq, tags: [cmq], when: install_cmq == 'true' }
+    - { role: install-configserver-cse, tags: [cse], when: install_cse == 'true' }
+    - { role: install-configserver-cxs, tags: [cxs], when: install_cxs == 'true' }
+    - { role: install-softaculous, tags: [softaculous], when: install_softaculous == 'true' }
+    - { role: install-cloudflare, tags: [cloudflare], when: install_cloudflare == 'true' }
+    - { role: install-letsencrypt, tags: [letsencrypt], when: install_letsencrypt == 'true' }
+    - { role: install-spamexperts, tags: [spamexperts], when: install_spamexperts == 'true' }
+    - { role: install-imunify, tags: [imunify], when: install_imunify == 'true' }
+    - { role: install-sitepad, tags: [sitepad], when: install_sitepad == 'true' }

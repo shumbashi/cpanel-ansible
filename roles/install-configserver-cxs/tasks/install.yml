@@ -1,0 +1,27 @@
+---
+- name: Download CXS gzipped tarball
+  get_url:
+    url: https://download.configserver.com/cxsinstaller.tgz
+    dest: /usr/src
+    force: yes
+  register: cxs_downloaded
+  when: cxs_installed == false
+  tags: configserver_cxs
+
+- name: Unarchive CXS source
+  unarchive:
+    src: /usr/src/cxsinstaller.tgz
+    dest: /usr/src
+    copy: no
+  register: cxs_unarchived
+  when: cxs_downloaded|changed and cxs_installed == false
+  tags: configserver_cxs
+
+- name: Install CXS
+  shell: perl /usr/src/cxsinstaller.pl
+  args:
+    chdir: /usr/src
+    creates: /usr/sbin/cxs
+  when: cxs_unarchived|changed and cxs_installed == false
+  register: cxs_install_completed
+  tags: configserver_cxs

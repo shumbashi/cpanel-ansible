@@ -1,0 +1,24 @@
+---
+# file: roles/cpanel/tasks/yum.yml
+#
+# cPanel Role
+# Task for handling yum package stuff
+#
+- name: cPanel Required packages rpms
+  yum:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items:
+    - { name: "curl", state: "installed" }
+    - { name: "wget", state: "installed" }
+    - { name: "perl", state: "installed" }
+    - { name: "@Desktop", state: "removed" }
+    - { name: "@Mono", state: "removed" }
+    - { name: "@E-mail server", state: "removed" }
+    - { name: "@FTP server", state: removed }
+    - { name: "@GNOME Desktop Environment", state: "removed" }
+    - { name: "@KDE Desktop", state: "removed" }
+    - { name: "@X Window System", state: "removed" }
+    - { name: "@Xfce", state: "removed" }
+    - { name: "@Web Server", state: "removed" }
+  tags: yum

@@ -1,0 +1,18 @@
+---
+- name: Check if Softaculous is installed
+  stat:
+    path: /usr/local/cpanel/whostmgr/docroot/cgi/softaculous/index.php
+  register: softaculous_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create softaculous_installed variable.
+  set_fact:
+    softaculous_installed: "{{ softaculous_check.stat.exists|bool }}"
+  check_mode: no
+  tags: always
+
+- name: Include the Softaculous Installer Task
+  include_tasks: install.yml
+  when: softaculous_installed != true and (install_softaculous is defined and install_softaculous == 'true')

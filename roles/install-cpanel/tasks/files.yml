@@ -1,0 +1,26 @@
+---
+# file: roles/cpanel/tasks/files.yml
+#
+# cPanel Role
+# Task for handling custom config files for cPanel
+#
+- name: Copy cPanel custom config Files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "cpanel.config", dest: "/root/cpanel_profile/cpanel.config", mode: "0644" }
+  tags: cpanel
+
+- name: Copy cPanel restore acocunts file
+  template:
+    src: "etc/cpanelacctrestore.j2"
+    dest: "/etc/cpanelacctrestore"
+    owner: root
+    group: root
+    mode: "0644"
+  tags: cpanel
+

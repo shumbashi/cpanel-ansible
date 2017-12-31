@@ -1,0 +1,32 @@
+---
+# file: roles/cpanel/tasks/install.yml
+#
+# cPanel Role
+# Task for handling cPanel install
+#
+- name: Fetch cPanel
+  get_url:
+    url: https://securedownloads.cpanel.net/latest
+    dest: /home/latest
+    mode: 0755
+    force: yes
+    validate_certs: false
+  tags: cpanel
+
+- name: Install cPanel
+  command: /bin/bash /home/latest
+  args:
+    chdir: /home
+    creates: /root/installer.lock
+  async: 5400 #wait up-to 90 minutes was 5400
+  poll: 300 #check every 5 minutes
+  register: cpanel_install_completed
+  tags: cpanel
+
+## If the install task completes before the install is actually completed
+## This task serves as a backup.
+- name: Wait for cPanel to install...
+  wait_for:
+    path: /var/log/cpanel-install.log
+    search_regex: "Thank you for installing cPanel"
+  tags: cpanel

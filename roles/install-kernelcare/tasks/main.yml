@@ -1,0 +1,17 @@
+---
+- name: Check if Kernelcare is installed
+  stat:
+    path: /usr/bin/kcarectl
+  register: kernelcare_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create kernelcare_installed variable.
+  set_fact:
+    kernelcare_installed: "{{ kernelcare_check.stat.exists|bool }}"
+  tags: always
+
+- name: Include the Kernelcare Installer Task
+  include_tasks: install.yml
+  when: kernelcare_installed != true and (install_kernelcare is defined and install_kernelcare == 'true')

@@ -1,0 +1,30 @@
+---
+- name: Download Sitepad Installer Package
+  get_url:
+    url: http://files.sitepad.com/install.sh
+    dest: /usr/src
+    force: yes
+    mode: 0755
+  register: sitepad_downloaded
+
+- name: Install Sitepad
+  shell: /bin/bash /usr/src/install.sh
+  args:
+    chdir: /usr/src
+    creates: /usr/local/sitepad/universal.php
+  when: sitepad_downloaded|changed and sitepad_installed == false
+  register: installation_complete
+
+- name: Generate Sitepad Customized Configuration
+  template:
+    src: universal.php.j2
+    dest: /usr/local/sitepad/universal.php
+    force: yes
+    backup: yes
+  when: installation_complete|changed
+
+- name: Protect Sitepad universal.php from Overwrite
+  shell: chattr +i /usr/local/sitepad/universal.php
+  args:
+    chdir: /usr/local/sitepad/
+  when: installation_complete|changed

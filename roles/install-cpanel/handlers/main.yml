@@ -1,0 +1,20 @@
+---
+- name: restart exim
+  command: /scripts/restartsrv_exim
+
+- name: restart apache
+  command: /scripts/restartsrv_httpd
+
+- name: restart mysql
+  command: /scripts/restartsrv_mysql
+
+- name: restart cpanel
+  command: /scripts/restartsrv_cpsrvd
+
+- name: restart pure-ftpd
+  command: /scripts/restartsrv_pureftpd
+
+- name: restart network
+  service:
+    name: network
+    state: restarted

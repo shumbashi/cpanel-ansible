@@ -1,0 +1,19 @@
+---
+- name: Check if CMM is installed
+  stat:
+    path: /usr/local/cpanel/whostmgr/docroot/cgi/configserver/cmm/cmm.conf
+  register: cmm_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create cmm_installed variable.
+  set_fact:
+    cmm_installed: "{{ cmm_check.stat.exists|bool }}"
+  check_mode: no
+  tags: always
+
+- name: Include the CMM Installer Task
+  include_tasks: install.yml
+  when: cmm_installed != true and (install_cmm is defined and install_cmm == 'true')
+

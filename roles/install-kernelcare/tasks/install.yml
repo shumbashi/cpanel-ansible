@@ -1,0 +1,6 @@
+---
+- name: Install Kernelcare
+  yum:
+    name: https://downloads.kernelcare.com/kernelcare-latest.x86_64.rpm
+    state: present
+  tags: install_kernelcare

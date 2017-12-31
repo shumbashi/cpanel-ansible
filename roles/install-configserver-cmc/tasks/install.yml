@@ -1,0 +1,28 @@
+---
+- name: Download CMC gzipped tarball
+  get_url:
+    url: https://download.configserver.com/cmc.tgz
+    dest: /usr/src
+    force: yes
+  register: cmc_downloaded
+  when: cmc_installed == false
+  tags: configserver_cmc
+
+- name: Unarchive CMC source
+  unarchive:
+    src: /usr/src/cmc.tgz
+    dest: /usr/src/
+    copy: no
+  register: cmc_unarchived
+  when: cmc_downloaded|changed and cmc_installed == false
+  tags: configserver_cmc
+
+- name: Install CMC
+  shell: bash /usr/src/cmc/install.sh
+  args:
+    chdir: /usr/src/cmc
+    creates: /usr/local/cpanel/whostmgr/docroot/cgi/configserver/cmc/cmc.conf
+  when: cmc_unarchived|changed and cmc_installed == false
+  register: cmc_install_completed
+  tags: configserver_cmc
+

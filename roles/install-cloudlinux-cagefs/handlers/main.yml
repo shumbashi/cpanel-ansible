@@ -1,0 +1,6 @@
+---
+- name: cagefs init
+  command: /usr/sbin/cagefsctl --init
+
+- name: cagefs rebuild
+  command: /usr/sbin/cagefsctl --force-update

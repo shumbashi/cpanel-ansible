@@ -1,0 +1,18 @@
+---
+- name: Check if CloudFlare cPanel plugin is installed
+  stat:
+    path: /usr/local/cpanel/etc/cloudflare.json
+  register: cloudflare_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create cloudflare_installed variable.
+  set_fact:
+    cloudflare_installed: "{{ cloudflare_check.stat.exists|bool }}"
+  check_mode: no
+  tags: always
+
+- name: Include the CloudFlare Installer Task
+  include_tasks: install.yml
+  when: cloudflare_installed != true and (install_cloudflare is defined and install_cloudflare == 'true')

@@ -1,0 +1,19 @@
+---
+# tasks file for install-letsencrypt
+
+- name: Upload License File
+  copy:
+    src: letsencrypt-cpanel.licence
+    dest: /etc/letsencrypt-cpanel.licence
+    mode: 0700
+
+- name: Add Repository
+  copy:
+    src: letsencrypt.repo
+    dest: /etc/yum.repos.d/letsencrypt.repo
+
+- name: Install Plugin
+  yum:
+    name: letsencrypt-cpanel
+    state: installed
+    update_cache: true

@@ -1,0 +1,4 @@
+---
+- name: Include the CloudLinux Alt-Packages Installer Task
+  include_tasks: install.yml
+  when: cloudlinux_installed == true and (install_cloudlinux_alt is defined and install_cloudlinux_alt == 'true')

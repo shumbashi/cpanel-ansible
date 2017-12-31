@@ -1,0 +1,58 @@
+---
+# cPanel Variables File
+
+control_panel: 'cPanel'
+is_openvz: 'false'
+
+#
+# CloudLinux
+#
+cloudlinux_key: 
+
+#
+# Imunify360
+#
+imunify_key:
+
+#
+# Plugin Settings
+#
+
+install_csf: 'true'
+install_cmc: 'true'
+install_cmm: 'true'
+install_cmq: 'true'
+install_cse: 'true'
+install_cxs: 'false'
+
+install_softaculous: 'false'
+install_cloudflare: 'false'
+
+install_cloudlinux: 'false'
+install_kernelcare: 'true'
+install_cloudlinux_cagefs: 'false'
+install_cloudlinux_alt: 'false'
+install_letsencrypt: 'false'
+install_spamexperts: 'false'
+install_imunify: 'false'
+install_sitepad: 'false'
+
+#  ##########################
+#  #### cPanel Settings #####
+#  ##########################
+
+cron_email_address: admin@yoursite.ly
+cpanel_email_address: admin@yoursite.ly
+alerts_email_address: admin@yoursite.ly
+cpanel_contact_pager: admin@yoursite.ly
+
+nameserver_primary: ns1.yourdomain.com
+nameserver_secondary: ns2.yourdomain.com
+
+#
+# Cloudflare
+#
+
+cloudflare_company: 
+cloudflare_mode: extended
+cloudflare_key: 

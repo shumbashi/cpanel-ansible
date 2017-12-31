@@ -1,0 +1,13 @@
+---
+## cPanel options for wwwacct.conf
+nameserver_primary: ns1.yourdomain.com
+nameserver_secondary: ns2.yourdomain.com
+nameserver_tertiary: #optional
+nameserver_quaternary: #optional
+
+cpanel_contact_pager: #optional (email address)
+cpanel_email_address: #optional (email address)
+
+cpanel_maxemailsperhour: 500
+
+restore_accounts:

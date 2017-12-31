@@ -1,0 +1,27 @@
+---
+- name: Download CMQ gzipped tarball
+  get_url:
+    url: https://download.configserver.com/cmq.tgz
+    dest: /usr/src
+    force: yes
+  register: cmq_downloaded
+  when: cmq_installed == false
+  tags: configserver_cmq
+
+- name: Unarchive CMQ source
+  unarchive:
+    src: /usr/src/cmq.tgz
+    dest: /usr/src/
+    copy: no
+  register: cmq_unarchived
+  when: cmq_downloaded|changed and cmq_installed == false
+  tags: configserver_cmq
+
+- name: Install CMQ
+  shell: bash /usr/src/cmq/install.sh
+  args:
+    chdir: /usr/src/cmq
+    creates: /usr/local/cpanel/whostmgr/docroot/cgi/configserver/cmq/cmq.conf
+  when: cmq_unarchived|changed and cmq_installed == false
+  register: cmq_install_completed
+  tags: configserver_cmq

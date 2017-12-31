@@ -1,0 +1,17 @@
+---
+
+- name: Download Imunify360 Installer Package
+  get_url:
+    url: http://repo.imunify360.cloudlinux.com/defence360/i360deploy.sh
+    dest: /usr/src
+    force: yes
+  register: imunify_downloaded
+
+- name: Install Imunify360
+  shell: bash /usr/src/i360deploy.sh -k {{ imunify_key }}
+  args:
+    chdir: /usr/src
+    creates: /etc/sysconfig/imunify360/imunify360.config
+    executable: /bin/bash
+  ignore_errors: true
+  when: imunify_downloaded|changed and imunify_installed == false and imunify_key is defined

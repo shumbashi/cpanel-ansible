@@ -1,0 +1,17 @@
+---
+- name: Check if CloudLinux is installed
+  stat:
+    path: /usr/bin/cldetect
+  register: cldetect_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create cloudlinux_installed variable.
+  set_fact:
+    cloudlinux_installed: "{{ cldetect_check.stat.exists|bool }}"
+  tags: always
+
+- name: Include the CloudLinux Installer Task
+  include_tasks: install.yml
+  when: cloudlinux_installed != true and (install_cloudlinux is defined and install_cloudlinux == 'true')

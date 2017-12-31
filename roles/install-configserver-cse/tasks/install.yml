@@ -1,0 +1,27 @@
+---
+- name: Download CSE gzipped tarball
+  get_url:
+    url: https://download.configserver.com/cse.tgz
+    dest: /usr/src
+    force: yes
+  register: cse_downloaded
+  when: cse_installed == false
+  tags: configserver_cse
+
+- name: Unarchive CSE source
+  unarchive:
+    src: /usr/src/cse.tgz
+    dest: /usr/src/
+    copy: no
+  register: cse_unarchived
+  when: cse_downloaded|changed and cse_installed == false
+  tags: configserver_cse
+
+- name: Install CSE
+  shell: bash /usr/src/cse/install.sh
+  args:
+    chdir: /usr/src/cse
+    creates: /usr/local/cpanel/whostmgr/docroot/cgi/configserver/cse/cse.conf
+  when: cse_unarchived|changed and cse_installed == false
+  register: cse_install_completed
+  tags: configserver_cse

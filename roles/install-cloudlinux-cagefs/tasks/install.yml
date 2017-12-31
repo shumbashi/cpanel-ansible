@@ -1,0 +1,23 @@
+---
+- name: Ensure CageFS Installed and updated
+  yum:
+    name: cagefs
+    state: installed
+    update_cache: yes
+    enablerepo: "cloudlinux-{{ ansible_architecture }}-server-{{ ansible_distribution_major_version  }}"
+  notify: cagefs init
+  tags: cloudlinux_cagefs
+
+- name: Ensure files exist
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: yes
+    mode: 0600
+  with_items:
+    - { src: 'cagefs/cagefs.mp', dest: '/etc/cagefs/cagefs.mp' }
+    - { src: 'cagefs/conf.d/django.cfg', dest: '/etc/cagefs/conf.d/django.cfg' }
+    - { src: 'cagefs/conf.d/ruby.cfg', dest: '/etc/cagefs/conf.d/ruby.cfg' }
+    - { src: 'cagefs/conf.d/composer.cfg', dest: '/etc/cagefs/conf.d/composer.cfg' }
+  notify: cagefs rebuild
+  tags: cloudlinux_cagefs

@@ -1,0 +1,18 @@
+---
+- name: Check if Sitepad is installed
+  stat:
+    path: /usr/local/sitepad/universal.php
+  register: sitepad_check
+  changed_when: false
+  check_mode: no
+  tags: always
+
+- name: Create sitepad_installed variable.
+  set_fact:
+    sitepad_installed: "{{ sitepad_check.stat.exists|bool }}"
+  check_mode: no
+  tags: always
+
+- name: Include the Sitepad Installer Task
+  include_tasks: install.yml
+  when: sitepad_installed != true and (install_sitepad is defined and install_sitepad == 'true')

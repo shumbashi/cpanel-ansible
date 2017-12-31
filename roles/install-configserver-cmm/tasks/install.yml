@@ -1,0 +1,27 @@
+---
+- name: Download CMM gzipped tarball
+  get_url:
+    url: https://download.configserver.com/cmm.tgz
+    dest: /usr/src
+    force: yes
+  register: cmm_downloaded
+  when: cmm_installed == false
+  tags: configserver_cmm
+
+- name: Unarchive CMM source
+  unarchive:
+    src: /usr/src/cmm.tgz
+    dest: /usr/src/
+    copy: no
+  register: cmm_unarchived
+  when: cmm_downloaded|changed and cmm_installed == false
+  tags: configserver_cmm
+
+- name: Install CMM
+  shell: bash /usr/src/cmm/install.sh
+  args:
+    chdir: /usr/src/cmm
+    creates: /usr/local/cpanel/whostmgr/docroot/cgi/configserver/cmm/cmm.conf
+  when: cmm_unarchived|changed and cmm_installed == false
+  register: cmm_install_completed
+  tags: configserver_cmm
