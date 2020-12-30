@@ -6,7 +6,8 @@
 #
 
 - name: Check whether cPanel is installed
-  command: grep -q "Congratulations! Your installation of cPanel & WHM" /var/log/cpanel-install.log
+  stat:
+    path: '/usr/local/cpanel/cpanel'
   register: cpanel_check
   check_mode: no
   failed_when: false
@@ -16,7 +17,7 @@
 - name: Register cpanel_installed variable
   set_fact:
     cpanel_installed: true
-  when: cpanel_check.rc == 0
+  when: cpanel_check.stat.exists
   tags: cpanel
 
 - name: cPanel OS Pre-requisites
